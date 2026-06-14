@@ -5,6 +5,7 @@ global generar_ventana
 global contar_caracter
 global validar_movimiento
 global detectar_objeto
+global cambiar_mapa
 
 section .text
 
@@ -106,3 +107,58 @@ detectar_objeto:
 .no_encontrado:
     xor eax, eax
     ret
+
+cambiar_mapa:
+    ;rcx puntero mapa actual
+    ;rdx mapa 1
+    ;r8  mapa 2
+    ;r9  mapa 3
+    ;stack entero x
+    ;stack entero y
+    mov r10,[rsp+40]
+    mov r11,[rsp+48]
+
+    cmp rcx, rdx
+    je .escaleras_mapa1
+    cmp rcx, r8
+    je .escaleras_mapa2
+    cmp rcx,r9
+    je .escaleras_mapa3
+
+    .escaleras_mapa1:
+
+    cmp r10,1
+    jne .otrasescaleras
+    cmp r11,1
+    jne .otrasescaleras
+    mov rcx,r8
+    ret
+
+    .otrasescaleras:
+    cmp r10,57
+    jne .noesnadawey
+    cmp r10,1
+    mov rcx, r9
+    ret
+
+    .escaleras_mapa2:
+
+    cmp r10,1
+    jne .noesnadawey
+    cmp r11,1
+    jne .noesnadawey
+    mov rcx,r8
+    ret
+
+    .escaleras_mapa3:
+
+    cmp r10,57
+    jne .noesnadawey
+    cmp r11,1
+    jne .noesnadawey
+    mov rcx,r8
+    ret
+
+    .noesnadawey:
+    ret
+

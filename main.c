@@ -15,8 +15,10 @@
 #define LLAVE 'K'
 #define PUERTA 'D'
 
-void generar_ventana(const char *matriz, char *salida, int columnas,
                      int fila_inicio, int columna_inicio, int tam_ventana);
+
+void generar_ventana(char *matriz, char *salida, int columnas, int fila_inicio,
+                     int columna_inicio, int tam_ventana);
 
 int contar_caracter(const char *mapa, int total_celdas, char caracter);
 int validar_movimiento(const char *mapa, int columnas, int fila, int columna,
