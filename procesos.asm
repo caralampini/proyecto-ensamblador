@@ -158,6 +158,32 @@ cambiar_mapa:
     jne .sin_cambio
     mov rax, r8
     ret
-
 .sin_cambio:
     ret
+    
+contar_celdas_libres:
+    cmp rcx, 0
+    je .matriz_vacia
+    cmp edx, 0
+    je .matriz_vacia
+        
+    mov r8d, 0;contador
+    mov r9d, 0;desplazamiento
+
+    .loop_hasta_final:
+    mov r10b, [rcx+r9]
+    cmp r10b, '.'
+    jne .continuar
+    inc r8d
+    .continuar:
+    inc r9d
+    cmp r9d, edx
+    jne .loop_hasta_final
+
+    mov eax, r8d
+    ret
+
+    .matriz_vacia: 
+    mov eax, 0
+    ret
+
