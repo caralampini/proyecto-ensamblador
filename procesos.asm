@@ -162,3 +162,56 @@ cambiar_mapa:
     .noesnadawey:
     ret
 
+contar_celdas_libres:
+
+    push r12
+    push r13
+    push r14
+    cmp rcx, 0
+    je .matriz_limpia
+    
+    mov r10d, 0;fila
+    mov r11d, 0;columnas
+    mov r12d, 0;contador
+    mov r13b, 0;lector
+    mov r14b, 0;desplazamiento
+
+    .loop_filas:
+    mov r11d, 0
+    .loop_columnas:
+
+    mov r14d, r10d
+    imul r14d, r8d
+    add r14d, r11d
+
+    mov  r13b, [rcx+r14d]
+    cmp r13b, '.'
+    jne .continue
+    inc r12d
+
+    .continue:
+
+    
+    inc r11d
+    cmp r11d, r8d
+    jne .loop_columnas
+
+    
+    inc r10d
+    cmp r10d, edx
+    jne .loop_filas
+
+    mov eax, r12d
+    pop r14
+    pop r13
+    pop r12
+
+    ret
+
+    .matriz_limpia:
+    mov eax,0
+    pop r14
+    pop r13
+    pop r12
+   
+    ret
