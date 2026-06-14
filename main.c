@@ -15,20 +15,20 @@
 #define LLAVE 'K'
 #define PUERTA 'D'
 
-void generar_ventana(char *matriz, char *salida, int columnas, int fila_inicio,
-                     int columna_inicio, int tam_ventana);
+void generar_ventana(const char *matriz, char *salida, int columnas,
+                     int fila_inicio, int columna_inicio, int tam_ventana);
 
-int contar_caracter(char *mapa, int total_celdas, char caracter);
-int validar_movimiento(char *mapa, int columnas, int fila, int columna,
+int contar_caracter(const char *mapa, int total_celdas, char caracter);
+int validar_movimiento(const char *mapa, int columnas, int fila, int columna,
                        int tiene_llave);
-int detectar_objeto(char *mapa, int columnas, int fila, int columna,
+int detectar_objeto(const char *mapa, int columnas, int fila, int columna,
                     char objeto);
 
 void iniciar_mapa(char mapa[FILAS][COLUMNAS], int *fila_jugador,
                   int *columna_jugador) {
   const char *dibujo[FILAS] = {
       "############################################################",
-      "#P..M.K...................................................#",
+      "#P..M.K....................................................#",
       "#..........................................................#",
       "#..........................................................#",
       "#.........########............########.....................#",
@@ -127,7 +127,7 @@ int inicio_ventana(int posicion) {
   return inicio;
 }
 
-void imprimir_juego(char mapa[FILAS][COLUMNAS], int fila_jugador,
+void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
                     int columna_jugador, int monedas_recolectadas, int llaves) {
   char salida[TAM_SALIDA];
   int fila_inicio = inicio_ventana(fila_jugador);
