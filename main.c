@@ -17,7 +17,7 @@
 
 char* cambiar_mapa(char* actual, char* mapa1, char* mapa2, char* mapa3, int x, int y );
 
-int contar_celdas_libres(char* actual, int filas, int columnas);
+int contar_celdas_libres(char* actual, int numCeldas);//numCeldas == filas*columnas
 
 void generar_ventana(char *matriz, char *salida, int columnas, int fila_inicio,
                      int columna_inicio, int tam_ventana);
