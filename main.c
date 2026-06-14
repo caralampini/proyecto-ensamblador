@@ -8,21 +8,27 @@
 #define VENTANA 20
 #define TAM_SALIDA (VENTANA * (VENTANA + 1) + 1)
 
-#define VACIO 0
-#define MURO 1
-#define JUGADOR 2
+#define CAMINO '.'
+#define MURO '#'
+#define JUGADOR 'P'
+#define MONEDA 'M'
+#define LLAVE 'K'
+#define PUERTA 'D'
 
-void generar_ventana(int *matriz, char *salida, int columnas, int fila_inicio,
+void generar_ventana(char *matriz, char *salida, int columnas, int fila_inicio,
                      int columna_inicio, int tam_ventana);
 
-void intercambiar(int *matriz, int columnas, int fila1, int columna1, int fila2,
-                  int columna2);
+int contar_caracter(char *mapa, int total_celdas, char caracter);
+int validar_movimiento(char *mapa, int columnas, int fila, int columna,
+                       int tiene_llave);
+int detectar_objeto(char *mapa, int columnas, int fila, int columna,
+                    char objeto);
 
-void iniciar_mapa(int mapa[FILAS][COLUMNAS], int *fila_jugador,
+void iniciar_mapa(char mapa[FILAS][COLUMNAS], int *fila_jugador,
                   int *columna_jugador) {
   const char *dibujo[FILAS] = {
       "############################################################",
-      "#@.........................................................#",
+      "#P..M.K...................................................#",
       "#..........................................................#",
       "#..........................................................#",
       "#.........########............########.....................#",
@@ -35,11 +41,11 @@ void iniciar_mapa(int mapa[FILAS][COLUMNAS], int *fila_jugador,
       "#..........................................................#",
       "#..........................................................#",
       "#...........######........................######...........#",
-      "#...........#....#........................#....#...........#",
+      "#...........D....#........................#....#...........#",
       "#...........#....#......####....####......#....#...........#",
       "#...........#....#......#.........#.......#....#...........#",
       "#...........######......#.........#.......######...........#",
-      "#..........................................................#",
+      "#....................M.....................................#",
       "#.........########............########.....................#",
       "#..........................................................#",
       "#....#.........#.........#.........#.........#.........#...#",
@@ -49,7 +55,7 @@ void iniciar_mapa(int mapa[FILAS][COLUMNAS], int *fila_jugador,
       "#.....................################.....................#",
       "#..........................................................#",
       "#..........................................................#",
-      "#..................########....########....................#",
+      "#..................########....########..........M.........#",
       "#.......................#........#.........................#",
       "#...........######......#........#......######.............#",
       "#...........#....#......#........#......#....#.............#",
@@ -61,7 +67,7 @@ void iniciar_mapa(int mapa[FILAS][COLUMNAS], int *fila_jugador,
       "#.............#.........#.........#.........#..............#",
       "#.............#.........#.........#.........#..............#",
       "#..........................................................#",
-      "#.............######....................######.............#",
+      "#.............######....................######......M......#",
       "#.............#.............................#..............#",
       "#.............#........######....######.....#..............#",
       "#.............#........#....#....#....#.....#..............#",
@@ -76,7 +82,7 @@ void iniciar_mapa(int mapa[FILAS][COLUMNAS], int *fila_jugador,
       "#.....................#..............#.....................#",
       "#...........######....#..............#....######...........#",
       "#...........#....#....#..............#....#....#...........#",
-      "#...........######....################....######...........#",
+      "#...........######....################....######....M......#",
       "#..........................................................#",
       "#..........................................................#",
       "#..........................................................#",
@@ -85,14 +91,11 @@ void iniciar_mapa(int mapa[FILAS][COLUMNAS], int *fila_jugador,
 
   for (int i = 0; i < FILAS; i++) {
     for (int j = 0; j < COLUMNAS; j++) {
-      if (dibujo[i][j] == '#') {
-        mapa[i][j] = MURO;
-      } else if (dibujo[i][j] == '@') {
-        mapa[i][j] = JUGADOR;
+      mapa[i][j] = dibujo[i][j];
+
+      if (mapa[i][j] == JUGADOR) {
         *fila_jugador = i;
         *columna_jugador = j;
-      } else {
-        mapa[i][j] = VACIO;
       }
     }
   }
@@ -124,8 +127,8 @@ int inicio_ventana(int posicion) {
   return inicio;
 }
 
-void imprimir_juego(int mapa[FILAS][COLUMNAS], int fila_jugador,
-                    int columna_jugador) {
+void imprimir_juego(char mapa[FILAS][COLUMNAS], int fila_jugador,
+                    int columna_jugador, int monedas_recolectadas, int llaves) {
   char salida[TAM_SALIDA];
   int fila_inicio = inicio_ventana(fila_jugador);
   int columna_inicio = inicio_ventana(columna_jugador);
@@ -133,23 +136,29 @@ void imprimir_juego(int mapa[FILAS][COLUMNAS], int fila_jugador,
   generar_ventana(&mapa[0][0], salida, COLUMNAS, fila_inicio, columna_inicio,
                   VENTANA);
 
+  printf("Monedas: %d | Llaves: %d\n", monedas_recolectadas, llaves);
   printf("%s", salida);
 }
 
 int main() {
-  int mapa[FILAS][COLUMNAS];
+  char mapa[FILAS][COLUMNAS];
   int fila_jugador;
   int columna_jugador;
+  int llaves = 0;
+  int monedas_recolectadas = 0;
+  int total_monedas;
   char direccion;
 
   iniciar_mapa(mapa, &fila_jugador, &columna_jugador);
+  total_monedas = contar_caracter(&mapa[0][0], FILAS * COLUMNAS, MONEDA);
 
   do {
     int fila_nueva = fila_jugador;
     int columna_nueva = columna_jugador;
 
     system("cls");
-    imprimir_juego(mapa, fila_jugador, columna_jugador);
+    imprimir_juego(mapa, fila_jugador, columna_jugador, monedas_recolectadas,
+                   llaves);
 
     direccion = tolower(_getch());
 
@@ -171,12 +180,24 @@ int main() {
       continue;
     }
 
-    if (mapa[fila_nueva][columna_nueva] == MURO) {
+    if (!validar_movimiento(&mapa[0][0], COLUMNAS, fila_nueva, columna_nueva,
+                            llaves > 0)) {
       continue;
     }
 
-    intercambiar(&mapa[0][0], COLUMNAS, fila_jugador, columna_jugador,
-                 fila_nueva, columna_nueva);
+    if (detectar_objeto(&mapa[0][0], COLUMNAS, fila_nueva, columna_nueva,
+                        MONEDA) &&
+        monedas_recolectadas < total_monedas) {
+      monedas_recolectadas++;
+    }
+
+    if (detectar_objeto(&mapa[0][0], COLUMNAS, fila_nueva, columna_nueva,
+                        LLAVE)) {
+      llaves++;
+    }
+
+    mapa[fila_jugador][columna_jugador] = CAMINO;
+    mapa[fila_nueva][columna_nueva] = JUGADOR;
 
     fila_jugador = fila_nueva;
     columna_jugador = columna_nueva;

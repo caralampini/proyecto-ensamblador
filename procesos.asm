@@ -1,7 +1,10 @@
 bits 64
 default rel
 
-global generar_ventana, intercambiar
+global generar_ventana
+global contar_caracter
+global validar_movimiento
+global detectar_objeto
 
 section .text
 
@@ -11,41 +14,18 @@ generar_ventana:
 
     xor r10d, r10d
 
-    .fila_loop:
+.fila_loop:
     xor r11d, r11d
 
-    .columna_loop:
+.columna_loop:
     mov eax, r9d
     add eax, r10d
     imul eax, r8d
     add eax, [rsp + 40]
     add eax, r11d
-
     movsxd rax, eax
-    mov eax, [rcx + rax * 4]
 
-    cmp eax, 0
-    je .valor_vacio
-    cmp eax, 1
-    je .valor_muro
-    cmp eax, 2
-    je .valor_jugador
-
-    mov al, '?'
-    jmp .escribir
-
-    .valor_vacio:
-    mov al, '.'
-    jmp .escribir
-
-    .valor_muro:
-    mov al, '#'
-    jmp .escribir
-
-    .valor_jugador:
-    mov al, '@'
-
-    .escribir:
+    mov al, [rcx + rax]
     mov [rdx], al
     inc rdx
 
@@ -63,30 +43,66 @@ generar_ventana:
     mov byte [rdx], 0
     ret
 
-    .salida_vacia:
+.salida_vacia:
     mov byte [rdx], 0
     ret
 
-intercambiar:
+contar_caracter:
+    xor eax, eax
+    test edx, edx
+    jle .fin_contar
+
+.loop_contar:
+    cmp byte [rcx], r8b
+    jne .siguiente_contar
+    inc eax
+
+.siguiente_contar:
+    inc rcx
+    dec edx
+    jnz .loop_contar
+
+.fin_contar:
+    ret
+
+validar_movimiento:
     mov eax, r8d
     imul eax, edx
     add eax, r9d
-
     movsxd rax, eax
-    lea r10, [rcx + rax * 4]
 
-    mov r11d, [rsp + 40]
-    mov eax, r11d
+    mov r10b, [rcx + rax]
+
+    cmp r10b, '#'
+    je .mov_bloqueado
+
+    cmp r10b, 'D'
+    jne .mov_valido
+
+    cmp dword [rsp + 40], 0
+    je .mov_bloqueado
+
+.mov_valido:
+    mov eax, 1
+    ret
+
+.mov_bloqueado:
+    xor eax, eax
+    ret
+
+detectar_objeto:
+    mov eax, r8d
     imul eax, edx
-    mov r11d, [rsp + 48]
-    add eax, r11d
-
+    add eax, r9d
     movsxd rax, eax
-    lea r11, [rcx + rax * 4]
 
-    mov eax, [r10]
-    mov r8d, [r11]
+    mov r10b, [rsp + 40]
+    cmp [rcx + rax], r10b
+    jne .no_encontrado
 
-    mov [r10], r8d
-    mov [r11], eax
+    mov eax, 1
+    ret
+
+.no_encontrado:
+    xor eax, eax
     ret
