@@ -113,55 +113,54 @@ cambiar_mapa:
     ;rdx mapa 1
     ;r8  mapa 2
     ;r9  mapa 3
-    ;stack entero x
-    ;stack entero y
-    mov r10,[rsp+40]
-    mov r11,[rsp+48]
+    ;stack entero fila
+    ;stack entero columna
+    mov r10d, [rsp + 40]
+    mov r11d, [rsp + 48]
+    mov rax, rcx
 
     cmp rcx, rdx
-    je .escaleras_mapa1
+    je .mapa1
     cmp rcx, r8
-    je .escaleras_mapa2
-    cmp rcx,r9
-    je .escaleras_mapa3
-
-    .escaleras_mapa1:
-
-    cmp r10,1
-    jne .otrasescaleras
-    cmp r11,1
-    jne .otrasescaleras
-    mov rcx,r8
+    je .mapa2
+    cmp rcx, r9
+    je .mapa3
     ret
 
-    .otrasescaleras:
-    cmp r10,57
-    jne .noesnadawey
-    cmp r10,1
-    mov rcx, r9
+.mapa1:
+    cmp r10d, 0
+    jne .sin_cambio
+    cmp r11d, 2
+    jne .sin_cambio
+    mov rax, r8
     ret
 
-    .escaleras_mapa2:
-
-    cmp r10,1
-    jne .noesnadawey
-    cmp r11,1
-    jne .noesnadawey
-    mov rcx,r8
+.mapa2:
+    cmp r10d, 0
+    jne .mapa2_atico
+    cmp r11d, 2
+    jne .mapa2_atico
+    mov rax, rdx
     ret
 
-    .escaleras_mapa3:
-
-    cmp r10,57
-    jne .noesnadawey
-    cmp r11,1
-    jne .noesnadawey
-    mov rcx,r8
+.mapa2_atico:
+    cmp r10d, 59
+    jne .sin_cambio
+    cmp r11d, 7
+    jne .sin_cambio
+    mov rax, r9
     ret
 
-    .noesnadawey:
+.mapa3:
+    cmp r10d, 0
+    jne .sin_cambio
+    cmp r11d, 56
+    jne .sin_cambio
+    mov rax, r8
     ret
-
+.sin_cambio:
+    ret
+    
 contar_celdas_libres:
     cmp rcx, 0
     je .matriz_vacia
@@ -187,3 +186,4 @@ contar_celdas_libres:
     .matriz_vacia: 
     mov eax, 0
     ret
+
