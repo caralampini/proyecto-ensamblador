@@ -2,6 +2,7 @@
 #define MAPAS_H
 
 //cambiar colores a ciertos  caracteres
+//pulir niveles y hacer mas complicados
 
 //piso 1 (planta baja)
 static const char nivel1[60][60] = {
@@ -134,9 +135,6 @@ static const char nivel2[60][60] = {
 
 
 };
-
-
-//pendiente terminar este nivel
 //sotano (nivel 3)
 static const char nivel3[60][60] = {
     "########################################################E##",
@@ -197,7 +195,7 @@ static const char nivel3[60][60] = {
     "##########........................................#########",
     "##########........................................#########",
     "############################E##############################",
-   
+
 };
 
 #endif 
