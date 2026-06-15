@@ -6,6 +6,9 @@ global contar_caracter
 global validar_movimiento
 global detectar_objeto
 global cambiar_mapa
+global contar_celdas_libres
+global verificar_puerta_llave
+
 
 section .text
 
@@ -187,3 +190,23 @@ contar_celdas_libres:
     mov eax, 0
     ret
 
+
+verificar_puerta_llave
+    cmp rcx, 0
+    je .vacio
+    cmp edx, 0
+    jl .vacio
+    cmp edx, r8d
+    jge .vacio
+    movsxd rdx,edx
+    mov r9b, [rcx+rdx]
+    cmp r9b,0
+    jne .verdadero
+    .vacio:
+    xor eax,eax
+    ret
+
+    
+    .verdadero:
+    mov eax, 1    
+    ret

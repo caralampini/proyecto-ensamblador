@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define FILAS 60
 #define COLUMNAS 60
@@ -17,6 +18,8 @@
 #define ESCALERA 'E'
 
 #include "mapa.h"
+
+bool verificar_puerta_llave(bool* llavero, int puerta, int tamañoVector);
 
 char *cambiar_mapa(char *actual, char *mapa1, char *mapa2, char *mapa3,
                    int fila, int columna);
@@ -105,6 +108,7 @@ int main() {
   int total_monedas;
   char celda_jugador = CAMINO;
   char direccion;
+
 
   copiar_mapa(nivel1, mapa1, 1, &fila_jugador, &columna_jugador);
   copiar_mapa(nivel2, mapa2, 0, NULL, NULL);
