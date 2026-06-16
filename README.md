@@ -71,7 +71,7 @@ El proyecto usa rutinas en NASM llamadas desde C:
 Formula del puntaje:
 
 ```txt
-puntaje = monedas * 100 + niveles * 500 - pasos * 2
+puntaje = monedas * 100 + niveles * 1000 - pasos
 ```
 
 Si el resultado es negativo, el puntaje final se ajusta a `0`.
