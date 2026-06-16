@@ -437,6 +437,7 @@ void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
     if (attr)
       SetConsoleTextAttribute(hOut, attr);
     putchar(ch);
+    putchar(' ');
     if (attr)
       SetConsoleTextAttribute(hOut, origAttr);
   }
@@ -679,5 +680,4 @@ int main()
 
   return 0;
 }
-
 
