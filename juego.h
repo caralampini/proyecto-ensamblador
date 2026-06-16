@@ -47,8 +47,8 @@ typedef struct {
 //funciones para NASM
 
 extern int contar_caracter(char *mapa, int total_celdas, char caracter);
-extern int validar_movimiento(char *mapa, int columnas, int fila, int columna);
-extern long long calcular_puntaje(int monedas, int pasos, int niveles);
+extern int validar_movimiento(char *mapa, int columnas, int fila, int columna, int tiene_llave);
+extern int calcular_puntaje(int monedas, int pasos, int niveles);
 extern int detectar_objeto(char *mapa, int columnas, int fila, int columna, char objeto);
 extern int contar_celdas_libres(char *mapa, int total_celdas);
 

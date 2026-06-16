@@ -35,11 +35,12 @@
 //correcciones acerca de contar_caracter y generar_ventana, se corrigieron 
 //los nombres de las funciones en el header y en el asm, se corrigió la función contar_caracter para que cuente correctamente
 bool verificar_puerta_llave(bool* llavero, int puerta, int tamañoVector);
+float calcular_distancia(int p_x, int p_y, int e_x, int e_y);
 
 char *cambiar_mapa(char *actual, char *mapa1, char *mapa2, char *mapa3,
                    int fila, int columna);
 
-int contar_celdas_libres(char* actual, int numCeldas);//numCeldas == filas*columnas
+int contar_celdas_libres(const char *actual, int numCeldas);
 
 //estructura para persecucion
 
@@ -67,6 +68,7 @@ int validar_movimiento(const char *mapa, int columnas, int fila, int columna,
                        int tiene_llave);
 int detectar_objeto(const char *mapa, int columnas, int fila, int columna,
                     char objeto);
+int calcular_puntaje(int monedas, int pasos, int niveles);
 
 //convierte los defines hex a atributos de consola (mejor coincidencia posible)
 static WORD attr_from_hex(const char *hex) {
@@ -321,12 +323,13 @@ void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
   char salida[TAM_SALIDA];
   int fila_inicio = inicio_ventana(fila_jugador);
   int columna_inicio = inicio_ventana(columna_jugador);
+  int celdas_libres = contar_celdas_libres(&mapa[0][0], FILAS * COLUMNAS);
 
   generar_ventana(&mapa[0][0], salida, COLUMNAS, fila_inicio, columna_inicio,
                   VENTANA);
 
-  printf("Piso: %d | Monedas: %d | Llaves: %d\n", piso_actual,
-         monedas_recolectadas, llaves);
+  printf("Piso: %d | Monedas: %d | Llaves: %d | Celdas libres: %d\n",
+         piso_actual, monedas_recolectadas, llaves, celdas_libres);
 
   HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
   CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -355,6 +358,7 @@ int main() {
   int llaves;
   int monedas_recolectadas;
   int total_monedas;
+  int pasos_totales;
   char celda_jugador;
   char direccion;
   int num_enemigos1;
@@ -372,6 +376,7 @@ int main() {
     llaves = 0;
     monedas_recolectadas = 0;
     total_monedas = 0;
+    pasos_totales = 0;
     celda_jugador = CAMINO;
     num_enemigos1 = num_enemigos2 = num_enemigos3 = 0;
 
@@ -433,8 +438,29 @@ int main() {
         break;
       }
 
+      pasos_totales++;
+
       if (detectar_objeto(&mapa_actual[0][0], COLUMNAS, fila_nueva, columna_nueva,
                           ESCALERA)) {
+        if (mapa_actual == mapa3 && fila_nueva == 57 && columna_nueva == 28) {
+          int puntaje_final = calcular_puntaje(monedas_recolectadas, pasos_totales, 3);
+
+          system("cls");
+          printf("=================================\n");
+          printf("Juego completado\n");
+          printf("Monedas totales recolectadas: %d / %d\n", monedas_recolectadas,
+                 total_monedas);
+          printf("Pasos totales: %d\n", pasos_totales);
+          printf("Niveles completados: 3\n");
+          printf("Puntaje final: %d\n", puntaje_final);
+          printf("=================================\n");
+          printf("Presiona cualquier tecla para salir...");
+          _getch();
+          retry = 0;
+          game_over = 0;
+          break;
+        }
+
         char *mapa_anterior = &mapa_actual[0][0];
         char *mapa_siguiente = cambiar_mapa(mapa_anterior, &mapa1[0][0],
                                             &mapa2[0][0], &mapa3[0][0],
@@ -485,6 +511,7 @@ int main() {
       mapa_actual[fila_jugador][columna_jugador] = celda_jugador;
       celda_jugador = mapa_actual[fila_nueva][columna_nueva];
       if (celda_jugador == PUERTA) {
+        llaves--;
         celda_jugador = CAMINO;
       }
       mapa_actual[fila_nueva][columna_nueva] = JUGADOR;
