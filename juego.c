@@ -176,7 +176,8 @@ int mover_jugador(char *mapa, int nueva_fila, int nueva_columna, EstadoJuego *es
     }
     
     //usar función NASM para validar el movimiento
-    int movimiento_valido = validar_movimiento(mapa, MAPA_COLUMNAS, nueva_fila, nueva_columna);
+    int movimiento_valido = validar_movimiento(mapa, MAPA_COLUMNAS, nueva_fila,
+                                               nueva_columna, estado->tiene_llave);
     
     if (movimiento_valido) {
         //reemplazar la posición anterior del jugador con un camino
