@@ -27,6 +27,7 @@
 //correcciones acerca de contar_caracter y generar_ventana, se corrigieron 
 //los nombres de las funciones en el header y en el asm, se corrigió la función contar_caracter para que cuente correctamente
 bool verificar_puerta_llave(bool* llavero, int puerta, int tamañoVector);
+float calcular_distancia(int p_x, int p_y, int e_x, int e_y);
 
 char *cambiar_mapa(char *actual, char *mapa1, char *mapa2, char *mapa3,
                    int fila, int columna);

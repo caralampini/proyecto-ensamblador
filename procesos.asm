@@ -234,3 +234,18 @@ calcular_puntaje:
 
 .puntaje_listo:
     ret
+    
+calcular_distancia:
+    sub r8d, ecx        ; r8d = e_x - p_x
+    mov ecx, r8d
+    imul r8d, ecx       ; r8d = (e_x - p_x)^2 
+
+    sub r9d, edx        ; r9d = e_y - p_y
+    mov edx, r9d       
+    imul r9d, edx       ; r9d = (e_y - p_y)^2  
+
+    add r8d, r9d
+    cvtsi2ss xmm0, r8d  ; xmm0 = (float)r8d
+    sqrtss xmm0, xmm0   ; xmm0 = sqrt(xmm0)
+
+    ret
