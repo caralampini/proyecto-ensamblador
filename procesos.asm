@@ -13,7 +13,6 @@ global cambiar_mapa
 global contar_celdas_libres
 global verificar_puerta_llave
 
-
 section .text
 
 generar_ventana:

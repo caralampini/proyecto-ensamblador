@@ -31,7 +31,7 @@ bool verificar_puerta_llave(bool* llavero, int puerta, int tamañoVector);
 char *cambiar_mapa(char *actual, char *mapa1, char *mapa2, char *mapa3,
                    int fila, int columna);
 
-int contar_celdas_libres(char* actual, int numCeldas);//numCeldas == filas*columnas
+int contar_celdas_libres(const char *actual, int numCeldas);
 
 //estructura para persecucion
 
@@ -287,12 +287,13 @@ void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
   char salida[TAM_SALIDA];
   int fila_inicio = inicio_ventana(fila_jugador);
   int columna_inicio = inicio_ventana(columna_jugador);
+  int celdas_libres = contar_celdas_libres(&mapa[0][0], FILAS * COLUMNAS);
 
   generar_ventana(&mapa[0][0], salida, COLUMNAS, fila_inicio, columna_inicio,
                   VENTANA);
 
-  printf("Piso: %d | Monedas: %d | Llaves: %d\n", piso_actual,
-         monedas_recolectadas, llaves);
+  printf("Piso: %d | Monedas: %d | Llaves: %d | Celdas libres: %d\n",
+         piso_actual, monedas_recolectadas, llaves, celdas_libres);
   printf("%s", salida);
 }
 
@@ -437,6 +438,7 @@ int main() {
       mapa_actual[fila_jugador][columna_jugador] = celda_jugador;
       celda_jugador = mapa_actual[fila_nueva][columna_nueva];
       if (celda_jugador == PUERTA) {
+        llaves--;
         celda_jugador = CAMINO;
       }
       mapa_actual[fila_nueva][columna_nueva] = JUGADOR;
