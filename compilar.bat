@@ -35,7 +35,7 @@ for %%F in (*.c) do (
 echo .
 echo Compilando en GCC 
 
-gcc %CSRC% %OBJS% -o "%CARPETA%.exe"
+gcc %CSRC% %OBJS% -o "BitQuest.exe"
 if errorlevel 1 (
     echo Error al compilar GCC 
     exit /b 1
