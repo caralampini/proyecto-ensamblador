@@ -16,8 +16,10 @@
 #define VERDE "#23D11B" //jugador
 #define ROJO "#D12323" //enemigos
 #define AMARILLO "#D1D123" //monedas
-#define AZUL "#2375D1" //puertas
-#define MAGENTA "#D123D1" //llave
+#define CAFE "#532400" //puertas
+#define MAGENTA "#fd9712" //llave
+#define GRIS "#323232" //paredes
+#define AZUL "#0000ff" //salida
 
 
 #define CAMINO '.'
@@ -77,20 +79,24 @@ static WORD attr_from_hex(const char *hex) {
   if (strcmp(hex, ROJO) == 0) return FOREGROUND_RED | FOREGROUND_INTENSITY;
   if (strcmp(hex, AMARILLO) == 0) return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
   if (strcmp(hex, AZUL) == 0) return FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+  if (strcmp(hex, CAFE) == 0) return FOREGROUND_RED | FOREGROUND_GREEN;
   if (strcmp(hex, MAGENTA) == 0) return FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+  if (strcmp(hex, GRIS) == 0) return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
   return 0;
 }
 
+//poner los colores
+
 static WORD get_color_for_char(char ch) {
   switch (ch) {
-  case CAMINO: return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // blanco
-  case MURO: return attr_from_hex(AZUL);
+  case CAMINO: return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // blanco brillante
+  case MURO: return attr_from_hex(GRIS);
   case JUGADOR: return attr_from_hex(VERDE);
   case MONEDA: return attr_from_hex(AMARILLO);
   case LLAVE: return attr_from_hex(MAGENTA);
-  case PUERTA: return attr_from_hex(AZUL);
-  case ESCALERA: return FOREGROUND_RED | FOREGROUND_GREEN; // oscuro
+  case PUERTA: return attr_from_hex(CAFE);
   case ENEMIGO: return attr_from_hex(ROJO);
+  case ESCALERA: return attr_from_hex(AZUL);
   default: return 0;
   }
 }
