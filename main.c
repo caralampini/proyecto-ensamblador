@@ -37,6 +37,21 @@ bool Turno_enemigo = false;
 
 // correcciones acerca de contar_caracter y generar_ventana, se corrigieron
 // los nombres de las funciones en el header y en el asm, se corrigió la función contar_caracter para que cuente correctamente
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+void hideCursor() {
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO info;
+    info.dwSize = 100;
+    info.bVisible = FALSE; // Set to false to hide
+    SetConsoleCursorInfo(consoleHandle, &info);
+}
+
 bool verificar_puerta_llave(bool *llavero, int puerta, int tamañoVector);
 float calcular_distancia(int p_x, int p_y, int e_x, int e_y);
 
@@ -450,7 +465,7 @@ int main()
   Enemigo enemigos2[MAX_ENEMIGOS];
   Enemigo enemigos3[MAX_ENEMIGOS];
   int retry = 1;
-
+  hideCursor();
   // reinicia el nivel
   while (retry)
   {
@@ -485,8 +500,8 @@ int main()
                                                                                   : enemigos3;
       int *num_enemigos = mapa_actual == mapa1 ? &num_enemigos1 : mapa_actual == mapa2 ? &num_enemigos2
                                                                                        : &num_enemigos3;
-
-      system("cls");
+      gotoxy(0,0);
+      //system("cls");
       imprimir_juego(mapa_actual, fila_jugador, columna_jugador,
                      monedas_recolectadas, llaves, piso_actual);
 
@@ -664,3 +679,5 @@ int main()
 
   return 0;
 }
+
+
