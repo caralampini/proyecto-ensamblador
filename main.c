@@ -13,14 +13,13 @@
 #define VENTANA 20
 #define TAM_SALIDA (VENTANA * (VENTANA + 1) + 1)
 
-#define VERDE "#23D11B" //jugador
-#define ROJO "#D12323" //enemigos
-#define AMARILLO "#D1D123" //monedas
-#define CAFE "#532400" //puertas
-#define MAGENTA "#ff1d7b" //llave
-#define AZUL_CLARO "#1d9eff"  //escaleras
-#define AZUL_FUERTE "#0000ff" //escaleras
-
+#define VERDE "#23D11B"       // jugador
+#define ROJO "#D12323"        // enemigos
+#define AMARILLO "#D1D123"    // monedas
+#define CAFE "#532400"        // puertas
+#define MAGENTA "#ff1d7b"     // llave
+#define AZUL_CLARO "#1d9eff"  // escaleras
+#define AZUL_FUERTE "#0000ff" // escaleras
 
 #define CAMINO '.'
 #define MURO '#'
@@ -32,11 +31,13 @@
 #define ENEMIGO 'X'
 #define ENEMIGO_MAPA 'x'
 #define AREA_PERSECUCION 3 // distancia max a la que un enemigo puede perseguir al jugador
-#define MAX_ENEMIGOS 64 // cantidad max de enemigos que se pueden manejar
+#define MAX_ENEMIGOS 64    // cantidad max de enemigos que se pueden manejar
 
-//correcciones acerca de contar_caracter y generar_ventana, se corrigieron 
-//los nombres de las funciones en el header y en el asm, se corrigió la función contar_caracter para que cuente correctamente
-bool verificar_puerta_llave(bool* llavero, int puerta, int tamañoVector);
+bool Turno_enemigo = false;
+
+// correcciones acerca de contar_caracter y generar_ventana, se corrigieron
+// los nombres de las funciones en el header y en el asm, se corrigió la función contar_caracter para que cuente correctamente
+bool verificar_puerta_llave(bool *llavero, int puerta, int tamañoVector);
 float calcular_distancia(int p_x, int p_y, int e_x, int e_y);
 
 char *cambiar_mapa(char *actual, char *mapa1, char *mapa2, char *mapa3,
@@ -44,20 +45,21 @@ char *cambiar_mapa(char *actual, char *mapa1, char *mapa2, char *mapa3,
 
 int contar_celdas_libres(const char *actual, int numCeldas);
 
-//estructura para persecucion
+// estructura para persecucion
 
-typedef struct {
+typedef struct
+{
   int fila;
   int columna;
   char bajo;
 } Enemigo;
 
-//funciones para el manejo de enemigos
+// funciones para el manejo de enemigos
 void cargar_enemigos(char mapa[FILAS][COLUMNAS], Enemigo enemigos[], int *num_enemigos);
 int esta_en_misma_habitacion(const char mapa[FILAS][COLUMNAS], int fila_a, int col_a,
-                            int fila_b, int col_b);
+                             int fila_b, int col_b);
 int enemigo_puede_perseguir(const char mapa[FILAS][COLUMNAS], int fila_e, int col_e,
-                           int fila_j, int col_j);
+                            int fila_j, int col_j);
 int mover_enemigo(char mapa[FILAS][COLUMNAS], Enemigo *enemigo,
                   int fila_jugador, int columna_jugador);
 int mostrar_game_over(void);
@@ -72,46 +74,70 @@ int detectar_objeto(const char *mapa, int columnas, int fila, int columna,
                     char objeto);
 int calcular_puntaje(int monedas, int pasos, int niveles);
 
-//convierte los defines hex a atributos de consola (mejor coincidencia posible)
-static WORD attr_from_hex(const char *hex) {
-  if (!hex) return 0;
-  if (strcmp(hex, VERDE) == 0) return FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-  if (strcmp(hex, ROJO) == 0) return FOREGROUND_RED | FOREGROUND_INTENSITY;
-  if (strcmp(hex, AMARILLO) == 0) return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-  //if (strcmp(hex, AZUL_FUERTE) == 0) return FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-  if (strcmp(hex, CAFE) == 0) return FOREGROUND_RED | FOREGROUND_GREEN;
-  if (strcmp(hex, MAGENTA) == 0) return FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-  if (strcmp(hex, AZUL_CLARO) == 0) return FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+// convierte los defines hex a atributos de consola (mejor coincidencia posible)
+static WORD attr_from_hex(const char *hex)
+{
+  if (!hex)
+    return 0;
+  if (strcmp(hex, VERDE) == 0)
+    return FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+  if (strcmp(hex, ROJO) == 0)
+    return FOREGROUND_RED | FOREGROUND_INTENSITY;
+  if (strcmp(hex, AMARILLO) == 0)
+    return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+  // if (strcmp(hex, AZUL_FUERTE) == 0) return FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+  if (strcmp(hex, CAFE) == 0)
+    return FOREGROUND_RED | FOREGROUND_GREEN;
+  if (strcmp(hex, MAGENTA) == 0)
+    return FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+  if (strcmp(hex, AZUL_CLARO) == 0)
+    return FOREGROUND_BLUE | FOREGROUND_INTENSITY;
   return 0;
 }
 
-//poner los colores
+// poner los colores
 
-static WORD get_color_for_char(char ch) {
-  switch (ch) {
-  case CAMINO: return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // blanco brillante
-  case MURO: return attr_from_hex(AZUL_CLARO);
-  case JUGADOR: return attr_from_hex(VERDE);
-  case MONEDA: return attr_from_hex(AMARILLO);
-  case LLAVE: return attr_from_hex(MAGENTA);
-  case PUERTA: return attr_from_hex(CAFE);
-  case ENEMIGO: return attr_from_hex(ROJO);
-  //case ESCALERA: return attr_from_hex(AZUL_FUERTE);
-  default: return 0;
+static WORD get_color_for_char(char ch)
+{
+  switch (ch)
+  {
+  case CAMINO:
+    return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // blanco brillante
+  case MURO:
+    return attr_from_hex(AZUL_CLARO);
+  case JUGADOR:
+    return attr_from_hex(VERDE);
+  case MONEDA:
+    return attr_from_hex(AMARILLO);
+  case LLAVE:
+    return attr_from_hex(MAGENTA);
+  case PUERTA:
+    return attr_from_hex(CAFE);
+  case ENEMIGO:
+    return attr_from_hex(ROJO);
+  // case ESCALERA: return attr_from_hex(AZUL_FUERTE);
+  default:
+    return 0;
   }
 }
 
 void copiar_mapa(const char origen[FILAS][COLUMNAS], char mapa[FILAS][COLUMNAS],
                  int usar_jugador_inicial, int *fila_jugador,
-                 int *columna_jugador) {
-  for (int i = 0; i < FILAS; i++) {
-    for (int j = 0; j < COLUMNAS; j++) {
+                 int *columna_jugador)
+{
+  for (int i = 0; i < FILAS; i++)
+  {
+    for (int j = 0; j < COLUMNAS; j++)
+    {
       char celda = origen[i][j] == '\0' ? MURO : origen[i][j];
 
-      if (celda == JUGADOR && usar_jugador_inicial) {
+      if (celda == JUGADOR && usar_jugador_inicial)
+      {
         *fila_jugador = i;
         *columna_jugador = j;
-      } else if (celda == JUGADOR) {
+      }
+      else if (celda == JUGADOR)
+      {
         celda = CAMINO;
       }
 
@@ -120,15 +146,20 @@ void copiar_mapa(const char origen[FILAS][COLUMNAS], char mapa[FILAS][COLUMNAS],
   }
 }
 
-//carga el mapa con los enemigos y devuelve la cantidad de enemigos encontrados
-//hice toda la tarde esto ayudenme
-void cargar_enemigos(char mapa[FILAS][COLUMNAS], Enemigo enemigos[], int *num_enemigos) {
+// carga el mapa con los enemigos y devuelve la cantidad de enemigos encontrados
+// hice toda la tarde esto ayudenme
+void cargar_enemigos(char mapa[FILAS][COLUMNAS], Enemigo enemigos[], int *num_enemigos)
+{
   *num_enemigos = 0;
-  
-  for (int i = 0; i < FILAS; i++) {
-    for (int j = 0; j < COLUMNAS; j++) {
-      if (mapa[i][j] == ENEMIGO) {
-        if (*num_enemigos < MAX_ENEMIGOS) {
+
+  for (int i = 0; i < FILAS; i++)
+  {
+    for (int j = 0; j < COLUMNAS; j++)
+    {
+      if (mapa[i][j] == ENEMIGO)
+      {
+        if (*num_enemigos < MAX_ENEMIGOS)
+        {
           enemigos[*num_enemigos].fila = i;
           enemigos[*num_enemigos].columna = j;
           enemigos[*num_enemigos].bajo = CAMINO;
@@ -139,14 +170,17 @@ void cargar_enemigos(char mapa[FILAS][COLUMNAS], Enemigo enemigos[], int *num_en
     }
   }
 
-  for (int k = 0; k < *num_enemigos; k++) {
+  for (int k = 0; k < *num_enemigos; k++)
+  {
     mapa[enemigos[k].fila][enemigos[k].columna] = ENEMIGO;
   }
 }
 
 int esta_en_misma_habitacion(const char mapa[FILAS][COLUMNAS], int fila_a, int col_a,
-                            int fila_b, int col_b) {
-  if (fila_a == fila_b && col_a == col_b) {
+                             int fila_b, int col_b)
+{
+  if (fila_a == fila_b && col_a == col_b)
+  {
     return 1;
   }
 
@@ -164,28 +198,34 @@ int esta_en_misma_habitacion(const char mapa[FILAS][COLUMNAS], int fila_a, int c
   const int dr[4] = {-1, 1, 0, 0};
   const int dc[4] = {0, 0, -1, 1};
 
-  while (head < tail) {
+  while (head < tail)
+  {
     int rf = qf[head];
     int rc = qc[head];
     head++;
 
-    for (int d = 0; d < 4; d++) {
+    for (int d = 0; d < 4; d++)
+    {
       int nf = rf + dr[d];
       int nc = rc + dc[d];
 
-      if (nf < 0 || nf >= FILAS || nc < 0 || nc >= COLUMNAS) {
+      if (nf < 0 || nf >= FILAS || nc < 0 || nc >= COLUMNAS)
+      {
         continue;
       }
-      if (visit[nf][nc]) {
+      if (visit[nf][nc])
+      {
         continue;
       }
 
       char celda = mapa[nf][nc];
-      if (celda == MURO || celda == PUERTA) {
+      if (celda == MURO || celda == PUERTA)
+      {
         continue;
       }
 
-      if (nf == fila_b && nc == col_b) {
+      if (nf == fila_b && nc == col_b)
+      {
         return 1;
       }
 
@@ -200,8 +240,10 @@ int esta_en_misma_habitacion(const char mapa[FILAS][COLUMNAS], int fila_a, int c
 }
 
 int enemigo_puede_perseguir(const char mapa[FILAS][COLUMNAS], int fila_e, int col_e,
-                           int fila_j, int col_j) {
-  if (!esta_en_misma_habitacion(mapa, fila_e, col_e, fila_j, col_j)) {
+                            int fila_j, int col_j)
+{
+  if (!esta_en_misma_habitacion(mapa, fila_e, col_e, fila_j, col_j))
+  {
     return 0;
   }
 
@@ -210,7 +252,8 @@ int enemigo_puede_perseguir(const char mapa[FILAS][COLUMNAS], int fila_e, int co
 }
 
 int mover_enemigo(char mapa[FILAS][COLUMNAS], Enemigo *enemigo,
-                  int fila_jugador, int columna_jugador) {
+                  int fila_jugador, int columna_jugador)
+{
   const int dr[4] = {-1, 1, 0, 0};
   const int dc[4] = {0, 0, -1, 1};
   int opciones[4];
@@ -222,45 +265,57 @@ int mover_enemigo(char mapa[FILAS][COLUMNAS], Enemigo *enemigo,
   int puede_cazar = enemigo_puede_perseguir(mapa, enemigo->fila, enemigo->columna,
                                             fila_jugador, columna_jugador);
 
-  for (int d = 0; d < 4; d++) {
+  for (int d = 0; d < 4; d++)
+  {
     int nf = enemigo->fila + dr[d];
     int nc = enemigo->columna + dc[d];
 
-    if (nf < 0 || nf >= FILAS || nc < 0 || nc >= COLUMNAS) {
+    if (nf < 0 || nf >= FILAS || nc < 0 || nc >= COLUMNAS)
+    {
       continue;
     }
 
     char destino = mapa[nf][nc];
-    if (destino == MURO || destino == PUERTA || destino == ENEMIGO) {
+    if (destino == MURO || destino == PUERTA || destino == ENEMIGO)
+    {
       continue;
     }
 
-    if (!esta_en_misma_habitacion(mapa, enemigo->fila, enemigo->columna, nf, nc)) {
+    if (!esta_en_misma_habitacion(mapa, enemigo->fila, enemigo->columna, nf, nc))
+    {
       continue;
     }
 
     opciones[num_opciones++] = d;
 
-    if (puede_cazar) {
+    if (puede_cazar)
+    {
       int distancia = abs(nf - fila_jugador) + abs(nc - columna_jugador);
-      if (distancia < mejor_dist) {
+      if (distancia < mejor_dist)
+      {
         mejor_dist = distancia;
         num_mejores = 0;
         mejores[num_mejores++] = d;
-      } else if (distancia == mejor_dist) {
+      }
+      else if (distancia == mejor_dist)
+      {
         mejores[num_mejores++] = d;
       }
     }
   }
 
-  if (num_opciones == 0) {
+  if (num_opciones == 0)
+  {
     return 0;
   }
 
   int dir;
-  if (puede_cazar && num_mejores > 0 && distancia_jugador <= AREA_PERSECUCION) {
+  if (puede_cazar && num_mejores > 0 && distancia_jugador <= AREA_PERSECUCION)
+  {
     dir = mejores[rand() % num_mejores];
-  } else {
+  }
+  else
+  {
     dir = opciones[rand() % num_opciones];
   }
 
@@ -274,49 +329,60 @@ int mover_enemigo(char mapa[FILAS][COLUMNAS], Enemigo *enemigo,
   enemigo->columna = nueva_columna;
   mapa[nueva_fila][nueva_columna] = ENEMIGO;
 
-  if (destino == JUGADOR) {
+  if (destino == JUGADOR)
+  {
     return 2;
   }
 
   return 1;
 }
 
-int mostrar_game_over(void) {
-  while (1) {
+int mostrar_game_over(void)
+{
+  while (1)
+  {
     system("cls");
     printf("GAME OVER\n\n");
     printf("[R]etry  [E]xit\n");
 
     char tecla = tolower(_getch());
-    if (tecla == 'r') {
+    if (tecla == 'r')
+    {
       return 1;
     }
-    if (tecla == 'e') {
+    if (tecla == 'e')
+    {
       return 0;
     }
   }
 }
 
-int posicion_valida(int fila, int columna) {
-  if (fila < 0 || fila >= FILAS) {
+int posicion_valida(int fila, int columna)
+{
+  if (fila < 0 || fila >= FILAS)
+  {
     return 0;
   }
 
-  if (columna < 0 || columna >= COLUMNAS) {
+  if (columna < 0 || columna >= COLUMNAS)
+  {
     return 0;
   }
 
   return 1;
 }
 
-int inicio_ventana(int posicion) {
+int inicio_ventana(int posicion)
+{
   int inicio = posicion - (VENTANA / 2);
 
-  if (inicio < 0) {
+  if (inicio < 0)
+  {
     return 0;
   }
 
-  if (inicio > FILAS - VENTANA) {
+  if (inicio > FILAS - VENTANA)
+  {
     return FILAS - VENTANA;
   }
 
@@ -325,7 +391,8 @@ int inicio_ventana(int posicion) {
 
 void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
                     int columna_jugador, int monedas_recolectadas, int llaves,
-                    int piso_actual) {
+                    int piso_actual)
+{
   char salida[TAM_SALIDA];
   int fila_inicio = inicio_ventana(fila_jugador);
   int columna_inicio = inicio_ventana(columna_jugador);
@@ -340,20 +407,29 @@ void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
   HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
   CONSOLE_SCREEN_BUFFER_INFO csbi;
   WORD origAttr = 0;
-  if (GetConsoleScreenBufferInfo(hOut, &csbi)) origAttr = csbi.wAttributes;
+  if (GetConsoleScreenBufferInfo(hOut, &csbi))
+    origAttr = csbi.wAttributes;
 
-  for (char *p = salida; *p != '\0'; ++p) {
+  for (char *p = salida; *p != '\0'; ++p)
+  {
     char ch = *p;
-    if (ch == '\n') { putchar('\n'); continue; }
+    if (ch == '\n')
+    {
+      putchar('\n');
+      continue;
+    }
     WORD attr = get_color_for_char(ch);
-    if (attr) SetConsoleTextAttribute(hOut, attr);
+    if (attr)
+      SetConsoleTextAttribute(hOut, attr);
     putchar(ch);
-    if (attr) SetConsoleTextAttribute(hOut, origAttr);
+    if (attr)
+      SetConsoleTextAttribute(hOut, origAttr);
   }
   SetConsoleTextAttribute(hOut, origAttr);
 }
 
-int main() {
+int main()
+{
   char mapa1[FILAS][COLUMNAS];
   char mapa2[FILAS][COLUMNAS];
   char mapa3[FILAS][COLUMNAS];
@@ -375,8 +451,9 @@ int main() {
   Enemigo enemigos3[MAX_ENEMIGOS];
   int retry = 1;
 
-  //reinicia el nivel
-  while (retry) {
+  // reinicia el nivel
+  while (retry)
+  {
     mapa_actual = mapa1;
     piso_actual = 1;
     llaves = 0;
@@ -400,13 +477,14 @@ int main() {
 
     int game_over = 0;
 
-    do {
+    do
+    {
       int fila_nueva = fila_jugador;
       int columna_nueva = columna_jugador;
-      Enemigo *enemigos = mapa_actual == mapa1 ? enemigos1 :
-                         mapa_actual == mapa2 ? enemigos2 : enemigos3;
-      int *num_enemigos = mapa_actual == mapa1 ? &num_enemigos1 :
-                          mapa_actual == mapa2 ? &num_enemigos2 : &num_enemigos3;
+      Enemigo *enemigos = mapa_actual == mapa1 ? enemigos1 : mapa_actual == mapa2 ? enemigos2
+                                                                                  : enemigos3;
+      int *num_enemigos = mapa_actual == mapa1 ? &num_enemigos1 : mapa_actual == mapa2 ? &num_enemigos2
+                                                                                       : &num_enemigos3;
 
       system("cls");
       imprimir_juego(mapa_actual, fila_jugador, columna_jugador,
@@ -414,32 +492,46 @@ int main() {
 
       direccion = tolower(_getch());
 
-      if (direccion == 'q') {
+      if (direccion == 'q')
+      {
         game_over = 0;
         break;
-      } else if (direccion == 'w') {
+      }
+      else if (direccion == 'w')
+      {
         fila_nueva--;
-      } else if (direccion == 's') {
+      }
+      else if (direccion == 's')
+      {
         fila_nueva++;
-      } else if (direccion == 'a') {
+      }
+      else if (direccion == 'a')
+      {
         columna_nueva--;
-      } else if (direccion == 'd') {
+      }
+      else if (direccion == 'd')
+      {
         columna_nueva++;
-      } else {
+      }
+      else
+      {
         continue;
       }
 
-      if (!posicion_valida(fila_nueva, columna_nueva)) {
+      if (!posicion_valida(fila_nueva, columna_nueva))
+      {
         continue;
       }
 
       if (!validar_movimiento(&mapa_actual[0][0], COLUMNAS, fila_nueva,
-                              columna_nueva, llaves > 0)) {
+                              columna_nueva, llaves > 0))
+      {
         continue;
       }
 
       char destino_jugador = mapa_actual[fila_nueva][columna_nueva];
-      if (destino_jugador == ENEMIGO) {
+      if (destino_jugador == ENEMIGO)
+      {
         game_over = 1;
         break;
       }
@@ -447,8 +539,10 @@ int main() {
       pasos_totales++;
 
       if (detectar_objeto(&mapa_actual[0][0], COLUMNAS, fila_nueva, columna_nueva,
-                          ESCALERA)) {
-        if (mapa_actual == mapa3 && fila_nueva == 57 && columna_nueva == 28) {
+                          ESCALERA))
+      {
+        if (mapa_actual == mapa3 && fila_nueva == 57 && columna_nueva == 28)
+        {
           int puntaje_final = calcular_puntaje(monedas_recolectadas, pasos_totales, 3);
 
           system("cls");
@@ -472,24 +566,33 @@ int main() {
                                             &mapa2[0][0], &mapa3[0][0],
                                             fila_nueva, columna_nueva);
 
-        if (mapa_siguiente != mapa_anterior) {
+        if (mapa_siguiente != mapa_anterior)
+        {
           mapa_actual[fila_jugador][columna_jugador] = celda_jugador;
-          mapa_actual = (char(*)[COLUMNAS])mapa_siguiente;
+          mapa_actual = (char (*)[COLUMNAS])mapa_siguiente;
 
-          if (mapa_siguiente == &mapa1[0][0]) {
+          if (mapa_siguiente == &mapa1[0][0])
+          {
             piso_actual = 1;
             fila_jugador = 1;
             columna_jugador = 2;
-          } else if (mapa_siguiente == &mapa2[0][0]) {
+          }
+          else if (mapa_siguiente == &mapa2[0][0])
+          {
             piso_actual = 2;
-            if (fila_nueva == 0 && columna_nueva == 56) {
+            if (fila_nueva == 0 && columna_nueva == 56)
+            {
               fila_jugador = 58;
               columna_jugador = 7;
-            } else {
+            }
+            else
+            {
               fila_jugador = 1;
               columna_jugador = 2;
             }
-          } else {
+          }
+          else
+          {
             piso_actual = 3;
             fila_jugador = 1;
             columna_jugador = 56;
@@ -503,20 +606,23 @@ int main() {
 
       if (detectar_objeto(&mapa_actual[0][0], COLUMNAS, fila_nueva, columna_nueva,
                           MONEDA) &&
-          monedas_recolectadas < total_monedas) {
+          monedas_recolectadas < total_monedas)
+      {
         monedas_recolectadas++;
         mapa_actual[fila_nueva][columna_nueva] = CAMINO;
       }
 
       if (detectar_objeto(&mapa_actual[0][0], COLUMNAS, fila_nueva, columna_nueva,
-                          LLAVE)) {
+                          LLAVE))
+      {
         llaves++;
         mapa_actual[fila_nueva][columna_nueva] = CAMINO;
       }
 
       mapa_actual[fila_jugador][columna_jugador] = celda_jugador;
       celda_jugador = mapa_actual[fila_nueva][columna_nueva];
-      if (celda_jugador == PUERTA) {
+      if (celda_jugador == PUERTA)
+      {
         llaves--;
         celda_jugador = CAMINO;
       }
@@ -524,22 +630,32 @@ int main() {
 
       fila_jugador = fila_nueva;
       columna_jugador = columna_nueva;
+      if (Turno_enemigo)
+      {
+        for (int i = 0; i < *num_enemigos; i++)
+        {
 
-      for (int i = 0; i < *num_enemigos; i++) {
-        int resultado = mover_enemigo(mapa_actual, &enemigos[i], fila_jugador,
-                                     columna_jugador);
-        if (resultado == 2) {
-          game_over = 1;
-          break;
+          int resultado = mover_enemigo(mapa_actual, &enemigos[i], fila_jugador,
+                                        columna_jugador);
+          if (resultado == 2)
+          {
+            game_over = 1;
+            break;
+          }
         }
+        Turno_enemigo = false;
+      } else {
+        Turno_enemigo = true;
       }
 
-      if (game_over) {
+      if (game_over)
+      {
         break;
       }
     } while (!game_over);
 
-    if (!game_over) {
+    if (!game_over)
+    {
       break;
     }
 
