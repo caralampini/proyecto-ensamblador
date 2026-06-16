@@ -4,12 +4,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <windows.h>
+#include <string.h>
 #include "mapa.h"
 
 #define FILAS 60
 #define COLUMNAS 60
 #define VENTANA 20
 #define TAM_SALIDA (VENTANA * (VENTANA + 1) + 1)
+
+#define VERDE "#23D11B" //jugador
+#define ROJO "#D12323" //enemigos
+#define AMARILLO "#D1D123" //monedas
+#define AZUL "#2375D1" //puertas
+#define MAGENTA "#D123D1" //llave
 
 
 #define CAMINO '.'
@@ -41,6 +49,7 @@ typedef struct {
   char bajo;
 } Enemigo;
 
+//funciones para el manejo de enemigos
 void cargar_enemigos(char mapa[FILAS][COLUMNAS], Enemigo enemigos[], int *num_enemigos);
 int esta_en_misma_habitacion(const char mapa[FILAS][COLUMNAS], int fila_a, int col_a,
                             int fila_b, int col_b);
@@ -58,6 +67,31 @@ int validar_movimiento(const char *mapa, int columnas, int fila, int columna,
                        int tiene_llave);
 int detectar_objeto(const char *mapa, int columnas, int fila, int columna,
                     char objeto);
+
+//convierte los defines hex a atributos de consola (mejor coincidencia posible)
+static WORD attr_from_hex(const char *hex) {
+  if (!hex) return 0;
+  if (strcmp(hex, VERDE) == 0) return FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+  if (strcmp(hex, ROJO) == 0) return FOREGROUND_RED | FOREGROUND_INTENSITY;
+  if (strcmp(hex, AMARILLO) == 0) return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+  if (strcmp(hex, AZUL) == 0) return FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+  if (strcmp(hex, MAGENTA) == 0) return FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+  return 0;
+}
+
+static WORD get_color_for_char(char ch) {
+  switch (ch) {
+  case CAMINO: return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // blanco
+  case MURO: return attr_from_hex(AZUL);
+  case JUGADOR: return attr_from_hex(VERDE);
+  case MONEDA: return attr_from_hex(AMARILLO);
+  case LLAVE: return attr_from_hex(MAGENTA);
+  case PUERTA: return attr_from_hex(AZUL);
+  case ESCALERA: return FOREGROUND_RED | FOREGROUND_GREEN; // oscuro
+  case ENEMIGO: return attr_from_hex(ROJO);
+  default: return 0;
+  }
+}
 
 void copiar_mapa(const char origen[FILAS][COLUMNAS], char mapa[FILAS][COLUMNAS],
                  int usar_jugador_inicial, int *fila_jugador,
@@ -293,7 +327,21 @@ void imprimir_juego(const char mapa[FILAS][COLUMNAS], int fila_jugador,
 
   printf("Piso: %d | Monedas: %d | Llaves: %d\n", piso_actual,
          monedas_recolectadas, llaves);
-  printf("%s", salida);
+
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+  WORD origAttr = 0;
+  if (GetConsoleScreenBufferInfo(hOut, &csbi)) origAttr = csbi.wAttributes;
+
+  for (char *p = salida; *p != '\0'; ++p) {
+    char ch = *p;
+    if (ch == '\n') { putchar('\n'); continue; }
+    WORD attr = get_color_for_char(ch);
+    if (attr) SetConsoleTextAttribute(hOut, attr);
+    putchar(ch);
+    if (attr) SetConsoleTextAttribute(hOut, origAttr);
+  }
+  SetConsoleTextAttribute(hOut, origAttr);
 }
 
 int main() {
