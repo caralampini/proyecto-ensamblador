@@ -12,6 +12,7 @@ global detectar_objeto
 global cambiar_mapa
 global contar_celdas_libres
 global verificar_puerta_llave
+global calcular_puntaje
 
 section .text
 
@@ -212,4 +213,24 @@ verificar_puerta_llave:
     
     .verdadero:
     mov eax, 1    
+    ret
+
+calcular_puntaje:
+    ; Formula: monedas * 100 + niveles * 500 - pasos * 2
+    mov eax, ecx
+    imul eax, 100
+
+    mov r10d, r8d
+    imul r10d, 500
+    add eax, r10d
+
+    mov r10d, edx
+    imul r10d, 2
+    sub eax, r10d
+
+    cmp eax, 0
+    jge .puntaje_listo
+    xor eax, eax
+
+.puntaje_listo:
     ret

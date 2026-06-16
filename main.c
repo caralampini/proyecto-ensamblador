@@ -58,6 +58,7 @@ int validar_movimiento(const char *mapa, int columnas, int fila, int columna,
                        int tiene_llave);
 int detectar_objeto(const char *mapa, int columnas, int fila, int columna,
                     char objeto);
+int calcular_puntaje(int monedas, int pasos, int niveles);
 
 void copiar_mapa(const char origen[FILAS][COLUMNAS], char mapa[FILAS][COLUMNAS],
                  int usar_jugador_inicial, int *fila_jugador,
@@ -308,6 +309,7 @@ int main() {
   int llaves;
   int monedas_recolectadas;
   int total_monedas;
+  int pasos_totales;
   char celda_jugador;
   char direccion;
   int num_enemigos1;
@@ -325,6 +327,7 @@ int main() {
     llaves = 0;
     monedas_recolectadas = 0;
     total_monedas = 0;
+    pasos_totales = 0;
     celda_jugador = CAMINO;
     num_enemigos1 = num_enemigos2 = num_enemigos3 = 0;
 
@@ -386,8 +389,29 @@ int main() {
         break;
       }
 
+      pasos_totales++;
+
       if (detectar_objeto(&mapa_actual[0][0], COLUMNAS, fila_nueva, columna_nueva,
                           ESCALERA)) {
+        if (mapa_actual == mapa3 && fila_nueva == 57 && columna_nueva == 28) {
+          int puntaje_final = calcular_puntaje(monedas_recolectadas, pasos_totales, 3);
+
+          system("cls");
+          printf("=================================\n");
+          printf("Juego completado\n");
+          printf("Monedas totales recolectadas: %d / %d\n", monedas_recolectadas,
+                 total_monedas);
+          printf("Pasos totales: %d\n", pasos_totales);
+          printf("Niveles completados: 3\n");
+          printf("Puntaje final: %d\n", puntaje_final);
+          printf("=================================\n");
+          printf("Presiona cualquier tecla para salir...");
+          _getch();
+          retry = 0;
+          game_over = 0;
+          break;
+        }
+
         char *mapa_anterior = &mapa_actual[0][0];
         char *mapa_siguiente = cambiar_mapa(mapa_anterior, &mapa1[0][0],
                                             &mapa2[0][0], &mapa3[0][0],
