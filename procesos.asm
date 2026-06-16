@@ -3,8 +3,8 @@ default rel
 
 ;se hicieron cambios acerca de contar_caracter y generar_ventana
 ;se corrigieron los nombres de las funciones en el header y en el asm, 
-;se corrigió la funcion contar_caracter para que cuente correctamente el numero de monedas en el mapa
-;se corrigió la función generar_ventana para que genere correctamente la ventana visible del mapa.
+;se corrigio la funcion contar_caracter para que cuente correctamente el numero de monedas en el mapa
+;se corrigio la función generar_ventana para que genere correctamente la ventana visible del mapa.
 global generar_ventana
 global contar_caracter
 global validar_movimiento
