@@ -1,6 +1,10 @@
 bits 64
 default rel
 
+;se hicieron cambios acerca de contar_caracter y generar_ventana
+;se corrigieron los nombres de las funciones en el header y en el asm, 
+;se corrigió la funcion contar_caracter para que cuente correctamente el numero de monedas en el mapa
+;se corrigió la función generar_ventana para que genere correctamente la ventana visible del mapa.
 global generar_ventana
 global contar_caracter
 global validar_movimiento
@@ -191,7 +195,7 @@ contar_celdas_libres:
     ret
 
 
-verificar_puerta_llave
+verificar_puerta_llave:
     cmp rcx, 0
     je .vacio
     cmp edx, 0
