@@ -216,17 +216,15 @@ verificar_puerta_llave:
     ret
 
 calcular_puntaje:
-    ; Formula: monedas * 100 + niveles * 500 - pasos * 2
+    ; Formula: monedas * 100 + niveles * 1000 - pasos
     mov eax, ecx
     imul eax, 100
 
     mov r10d, r8d
-    imul r10d, 500
+    imul r10d, 1000
     add eax, r10d
 
-    mov r10d, edx
-    imul r10d, 2
-    sub eax, r10d
+    sub eax, edx
 
     cmp eax, 0
     jge .puntaje_listo
